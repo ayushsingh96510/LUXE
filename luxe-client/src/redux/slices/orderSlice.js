@@ -1,16 +1,12 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
 import toast from 'react-hot-toast';
-
-const API_URL = import.meta.env.VITE_API_URL;
+import api from '../../services/api';
 
 export const createOrder = createAsyncThunk(
   'order/create',
   async (orderData, { rejectWithValue }) => {
     try {
-      const response = await axios.post(`${API_URL}/orders`, orderData, {
-        withCredentials: true,
-      });
+      const response = await api.post('/orders', orderData);
       toast.success('Order placed successfully!');
       return response.data.data;
     } catch (error) {
@@ -24,9 +20,7 @@ export const getMyOrders = createAsyncThunk(
   'order/getMyOrders',
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axios.get(`${API_URL}/orders/my-orders`, {
-        withCredentials: true,
-      });
+      const response = await api.get('/orders/my-orders');
       return response.data.data;
     } catch (error) {
       return rejectWithValue(error.response?.data);
@@ -38,9 +32,7 @@ export const getOrderById = createAsyncThunk(
   'order/getById',
   async (id, { rejectWithValue }) => {
     try {
-      const response = await axios.get(`${API_URL}/orders/${id}`, {
-        withCredentials: true,
-      });
+      const response = await api.get(`/orders/${id}`);
       return response.data.data;
     } catch (error) {
       return rejectWithValue(error.response?.data);
@@ -52,11 +44,7 @@ export const cancelOrder = createAsyncThunk(
   'order/cancel',
   async (id, { rejectWithValue }) => {
     try {
-      const response = await axios.put(
-        `${API_URL}/orders/${id}/cancel`,
-        {},
-        { withCredentials: true }
-      );
+      const response = await api.put(`/orders/${id}/cancel`, {});
       toast.success('Order cancelled successfully');
       return response.data.data;
     } catch (error) {

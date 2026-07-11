@@ -6,14 +6,13 @@ import {
   Mail,
   Phone,
   MapPin,
-  Edit,
   Save,
   Camera,
   X,
 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { useUpdateProfileMutation } from '../../services/userService';
-import { getCurrentUser } from '../../redux/slices/authSlice';
+import { setUser } from '../../redux/slices/authSlice';
 import { Button } from '../ui/Button';
 import { Input } from '../ui/Input';
 import { Card } from '../ui/Card';
@@ -21,7 +20,6 @@ import { Card } from '../ui/Card';
 export const Profile = () => {
   const { user } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
-  const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
@@ -71,9 +69,8 @@ export const Profile = () => {
         formDataToSend.append('avatar', avatarFile);
       }
 
-      await updateProfile(formDataToSend).unwrap();
-      dispatch(getCurrentUser());
-      setIsEditing(false);
+      const result = await updateProfile(formDataToSend).unwrap();
+      dispatch(setUser(result.data));
       setAvatarFile(null);
       toast.success('Profile updated successfully!');
     } catch (error) {
@@ -100,17 +97,15 @@ export const Profile = () => {
                   alt={formData.name}
                   className="w-24 h-24 rounded-full object-cover border-4 border-primary/20"
                 />
-                {isEditing && (
-                  <label className="absolute bottom-0 right-0 p-1.5 bg-primary rounded-full cursor-pointer hover:bg-primary/90 transition">
-                    <Camera className="h-4 w-4 text-primary-foreground" />
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleAvatarChange}
-                      className="hidden"
-                    />
-                  </label>
-                )}
+                <label className="absolute bottom-0 right-0 p-1.5 bg-primary rounded-full cursor-pointer hover:bg-primary/90 transition">
+                  <Camera className="h-4 w-4 text-primary-foreground" />
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleAvatarChange}
+                    className="hidden"
+                  />
+                </label>
               </div>
               <h2 className="text-xl font-semibold mt-2">{formData.name}</h2>
               <p className="text-muted-foreground">{user?.role === 'admin' ? 'Admin' : 'Customer'}</p>
@@ -127,8 +122,7 @@ export const Profile = () => {
                   name="name"
                   value={formData.name}
                   onChange={handleInputChange}
-                  disabled={!isEditing}
-                  className={!isEditing ? 'bg-muted/50' : ''}
+                  placeholder="Enter your full name"
                 />
               </div>
 
@@ -153,8 +147,6 @@ export const Profile = () => {
                   name="phone"
                   value={formData.phone}
                   onChange={handleInputChange}
-                  disabled={!isEditing}
-                  className={!isEditing ? 'bg-muted/50' : ''}
                   placeholder="Add phone number"
                 />
               </div>
@@ -162,30 +154,10 @@ export const Profile = () => {
 
             {/* Actions */}
             <div className="flex gap-3 mt-6">
-              {isEditing ? (
-                <>
-                  <Button type="submit" disabled={isLoading}>
-                    <Save className="mr-2 h-4 w-4" />
-                    {isLoading ? 'Saving...' : 'Save Changes'}
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => {
-                      setIsEditing(false);
-                      setAvatarFile(null);
-                      setAvatarPreview(user?.avatar?.url || '');
-                    }}
-                  >
-                    Cancel
-                  </Button>
-                </>
-              ) : (
-                <Button type="button" onClick={() => setIsEditing(true)}>
-                  <Edit className="mr-2 h-4 w-4" />
-                  Edit Profile
-                </Button>
-              )}
+              <Button type="submit" disabled={isLoading}>
+                <Save className="mr-2 h-4 w-4" />
+                {isLoading ? 'Saving...' : 'Save Changes'}
+              </Button>
             </div>
           </form>
         </Card>

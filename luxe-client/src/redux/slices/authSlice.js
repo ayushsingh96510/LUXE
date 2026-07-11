@@ -1,17 +1,13 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
 import toast from 'react-hot-toast';
-
-const API_URL = import.meta.env.VITE_API_URL;
+import api from '../../services/api';
 
 // Login user
 export const loginUser = createAsyncThunk(
   'auth/login',
   async (credentials, { rejectWithValue }) => {
     try {
-      const response = await axios.post(`${API_URL}/auth/login`, credentials, {
-        withCredentials: true,
-      });
+      const response = await api.post('/auth/login', credentials);
       return response.data.data;
     } catch (error) {
       toast.error(error.response?.data?.message || 'Login failed');
@@ -25,7 +21,7 @@ export const registerUser = createAsyncThunk(
   'auth/register',
   async (userData, { rejectWithValue }) => {
     try {
-      const response = await axios.post(`${API_URL}/auth/register`, userData);
+      const response = await api.post('/auth/register', userData);
       toast.success('Registration successful! Please login.');
       return response.data.data;
     } catch (error) {
@@ -40,7 +36,7 @@ export const logoutUser = createAsyncThunk(
   'auth/logout',
   async (_, { rejectWithValue }) => {
     try {
-      await axios.post(`${API_URL}/auth/logout`, {}, { withCredentials: true });
+      await api.post('/auth/logout', {});
       toast.success('Logged out successfully');
     } catch (error) {
       toast.error('Logout failed');
@@ -54,9 +50,7 @@ export const getCurrentUser = createAsyncThunk(
   'auth/getUser',
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axios.get(`${API_URL}/users/profile`, {
-        withCredentials: true,
-      });
+      const response = await api.get('/users/profile');
       return response.data.data;
     } catch (error) {
       return rejectWithValue(error.response?.data);
@@ -78,6 +72,9 @@ const authSlice = createSlice({
   reducers: {
     clearError: (state) => {
       state.error = null;
+    },
+    setUser: (state, action) => {
+      state.user = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -134,5 +131,5 @@ const authSlice = createSlice({
   },
 });
 
-export const { clearError } = authSlice.actions;
+export const { clearError, setUser } = authSlice.actions;
 export default authSlice.reducer;

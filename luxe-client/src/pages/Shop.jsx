@@ -197,7 +197,7 @@ export const Shop = () => {
           {/* Products */}
           <div className="lg:col-span-3">
             {(isLoading || isFetching) ? (
-              <div className="flex items-center justify-center min-h-[400px]">
+              <div className="flex items-center justify-center min-h-100">
                 <LoadingSpinner />
               </div>
             ) : (

@@ -1,18 +1,12 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
 import toast from 'react-hot-toast';
-
-const API_URL = import.meta.env.VITE_API_URL;
+import api from '../../services/api';
 
 export const toggleWishlist = createAsyncThunk(
   'wishlist/toggle',
   async (productId, { rejectWithValue }) => {
     try {
-      const response = await axios.post(
-        `${API_URL}/users/wishlist`,
-        { productId },
-        { withCredentials: true }
-      );
+      const response = await api.post('/users/wishlist', { productId });
       return response.data.data;
     } catch (error) {
       toast.error(error.response?.data?.message || 'Failed to update wishlist');
@@ -25,9 +19,7 @@ export const getWishlist = createAsyncThunk(
   'wishlist/get',
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axios.get(`${API_URL}/users/wishlist`, {
-        withCredentials: true,
-      });
+      const response = await api.get('/users/wishlist');
       return response.data.data;
     } catch (error) {
       return rejectWithValue(error.response?.data);
