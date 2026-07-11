@@ -68,6 +68,7 @@ const initialState = {
   user: null,
   isLoading: false,
   isAuthenticated: false,
+  isInitialized: false,
   error: null,
 };
 
@@ -115,11 +116,13 @@ const authSlice = createSlice({
       })
       .addCase(getCurrentUser.fulfilled, (state, action) => {
         state.isLoading = false;
+        state.isInitialized = true;
         state.isAuthenticated = true;
         state.user = action.payload;
       })
       .addCase(getCurrentUser.rejected, (state) => {
         state.isLoading = false;
+        state.isInitialized = true;
         state.isAuthenticated = false;
         state.user = null;
       })

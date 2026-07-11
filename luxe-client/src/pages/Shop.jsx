@@ -31,14 +31,27 @@ export const Shop = () => {
   const debouncedSearch = useDebounce(filters.search, 500);
 
   useEffect(() => {
-    const params = new URLSearchParams();
-    Object.entries(filters).forEach(([key, value]) => {
-      if (value && key !== 'limit') {
-        params.set(key, value);
-      }
+    const nextFilters = {
+      search: searchParams.get('search') || '',
+      category: searchParams.get('category') || '',
+      brand: searchParams.get('brand') || '',
+      minPrice: searchParams.get('minPrice') || '',
+      maxPrice: searchParams.get('maxPrice') || '',
+      color: searchParams.get('color') || '',
+      size: searchParams.get('size') || '',
+      rating: searchParams.get('rating') || '',
+      sort: searchParams.get('sort') || '-createdAt',
+      page: parseInt(searchParams.get('page')) || 1,
+      limit: 12,
+    };
+
+    setFilters((prev) => {
+      const same = Object.entries(nextFilters).every(
+        ([key, value]) => prev[key] === value
+      );
+      return same ? prev : nextFilters;
     });
-    setSearchParams(params);
-  }, [filters, setSearchParams]);
+  }, [searchParams]);
 
   const queryParams = Object.fromEntries(
     Object.entries({ ...filters, search: debouncedSearch }).filter(

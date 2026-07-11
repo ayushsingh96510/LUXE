@@ -90,7 +90,7 @@ export const Navbar = () => {
             <div className="relative">
               <input
                 type="text"
-                placeholder="Search products..."
+                placeholder="..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-64 px-4 py-2 pl-10 rounded-full border border-input bg-background/50 focus:outline-none focus:ring-2 focus:ring-primary/50 transition"

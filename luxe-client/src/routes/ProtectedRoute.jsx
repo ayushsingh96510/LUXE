@@ -3,10 +3,10 @@ import { useSelector } from 'react-redux';
 import { LoadingSpinner } from '../components/common/LoadingSpinner';
 
 export const ProtectedRoute = ({ adminOnly = false }) => {
-  const { isAuthenticated, user, isLoading } = useSelector((state) => state.auth);
+  const { isAuthenticated, user, isLoading, isInitialized } = useSelector((state) => state.auth);
   const location = useLocation();
 
-  if (isLoading) {
+  if (!isInitialized || isLoading) {
     return <LoadingSpinner />;
   }
 
