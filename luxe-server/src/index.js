@@ -49,6 +49,7 @@ app.use('/api/users', userRoutes);
 app.use('/api/coupons', couponRoutes);
 app.use('/api/categories', categoryRoutes);
 
+
 // Health check
 app.get('/api/health', (req, res) => {
   res.json({ status: 'OK', message: 'LUXE API is running' });
